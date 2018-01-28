@@ -36,7 +36,15 @@ data class Forcast(
         val dtTxt: String? = "",
 
         @field:SerializedName("weather")
-        val weather: List<Weather>? = null
+        val weather: List<Weather>? = null,
+
+        @field:SerializedName("main")
+        val main: Temp? = null
+)
+
+data class Temp(
+        @field:SerializedName("temp")
+        val temp: String? = ""
 )
 
 data class Weather(

@@ -7,7 +7,6 @@ import android.util.Log.*
 import com.google.gson.Gson
 import id.ilhamsuaib.sunshine.model.Forcast
 import id.ilhamsuaib.sunshine.model.ForcastResponse
-import id.ilhamsuaib.sunshine.model.Weather
 import kotlinx.android.synthetic.main.activity_home.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -17,10 +16,7 @@ class HomeActivity : AppCompatActivity() {
 
     private val tag = this::class.java.simpleName
 
-    //https://api.openweathermap.org/data/2.5/forecast?id=1621177&appid=91ffcf633b4369135adf753d37304ba6
-    //91ffcf633b4369135adf753d37304ba6
-
-    private lateinit var adapter: WeatherAdapter
+    private lateinit var adapter: ForcastAdapter
     private val forcastList = mutableListOf<Forcast>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,9 +27,9 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun setupView() {
-        adapter = WeatherAdapter(forcastList)
-        recCuaca.layoutManager = LinearLayoutManager(this)
-        recCuaca.adapter = adapter
+        adapter = ForcastAdapter(forcastList)
+        recForcast.layoutManager = LinearLayoutManager(this)
+        recForcast.adapter = adapter
     }
 
     private fun getData() {
@@ -44,8 +40,8 @@ class HomeActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call<ForcastResponse>?, response: Response<ForcastResponse>?) {
                 i(tag, "data : ${Gson().toJsonTree(response?.body())}")
-                val nWeatherList = response?.body()?.forcastList
-                nWeatherList?.let {
+                val nForcastList = response?.body()?.forcastList?
+                nForcastList?.let {
                     forcastList.addAll(it)
                     adapter.notifyDataSetChanged()
                 }
