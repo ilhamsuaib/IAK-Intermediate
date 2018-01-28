@@ -33,7 +33,7 @@ data class City(
 
 data class Forcast(
         @field:SerializedName("dt_txt")
-        val dtTxt: String? = "",
+        var dtTxt: String? = "",
 
         @field:SerializedName("weather")
         val weather: List<Weather>? = null,

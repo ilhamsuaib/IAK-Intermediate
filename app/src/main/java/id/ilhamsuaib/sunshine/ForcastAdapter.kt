@@ -1,6 +1,8 @@
 package id.ilhamsuaib.sunshine
 
 import android.annotation.SuppressLint
+import android.support.annotation.DrawableRes
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.util.Log.i
 import android.view.LayoutInflater
@@ -15,7 +17,7 @@ import kotlinx.android.synthetic.main.item_forcast.view.*
  * Created by ilham on 1/27/18.
  */
 
-class ForcastAdapter(private val forcastList: List<Forcast>) : RecyclerView.Adapter<ForcastAdapter.Holder>() {
+class ForcastAdapter(val forcastList: List<Forcast>) : RecyclerView.Adapter<ForcastAdapter.Holder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): Holder {
         val view: View? = LayoutInflater.from(parent?.context)
@@ -37,8 +39,15 @@ class ForcastAdapter(private val forcastList: List<Forcast>) : RecyclerView.Adap
             if (forcast.weather?.isNotEmpty() == true) {
                 val weather: Weather = forcast.weather[0]
                 itemView?.tvWaktu?.text = forcast.dtTxt
-                itemView?.tvDerajatSuhu?.text = forcast.main?.temp+"\u00B0"
+                val degreeInCel = forcast.main?.temp?.toDouble()?.minus(273)
+                itemView?.tvDerajatSuhu?.text = "${degreeInCel?.toInt()}\u00B0"
                 itemView?.tvStatus?.text = weather.description
+                //mengambil icon berdasarkan id weather
+                val icon: Int  = getIcon(weather.id?.toInt()?:0)
+                println("weather id : ${weather.id}")
+                itemView?.imgStatus?.setImageDrawable(
+                        ContextCompat.getDrawable(itemView.context, icon)
+                )
             }
         }
     }

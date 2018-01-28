@@ -1,7 +1,9 @@
 package id.ilhamsuaib.sunshine
 
+import android.annotation.SuppressLint
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log.*
 import com.google.gson.Gson
@@ -38,14 +40,40 @@ class HomeActivity : AppCompatActivity() {
                 e(tag, t?.message)
             }
 
+            @SuppressLint("SetTextI18n")
             override fun onResponse(call: Call<ForcastResponse>?, response: Response<ForcastResponse>?) {
                 i(tag, "data : ${Gson().toJsonTree(response?.body())}")
-                val nForcastList = response?.body()?.forcastList?
-                nForcastList?.let {
+                val forcastResponse: ForcastResponse? = response?.body()
+
+                val kota = forcastResponse?.city?.name
+                val kodeNegara = forcastResponse?.city?.country?.toUpperCase()
+                tvKota.text = "$kota, $kodeNegara"
+
+                val nForcastList = forcastResponse?.forcastList
+                nForcastList?.map {
+                    it.dtTxt = convertDateToWeekDay(it.dtTxt)
+                }
+                val newForcastList = nForcastList?.distinctBy { it.dtTxt }
+                //menampilkan current forecast ke home
+                displayCurForcast(newForcastList?.get(0))
+
+                newForcastList?.let {
                     forcastList.addAll(it)
+                    forcastList.removeAt(0)
                     adapter.notifyDataSetChanged()
                 }
             }
         })
+    }
+
+    private fun displayCurForcast(forcast: Forcast?) {
+        tvHariIni.text = "Hari ini"
+        tvDerajatSuhu.text = forcast?.main?.temp?.toDouble()
+                ?.toInt()?.minus(273)?.toString()+"\u00B0"
+        val icon = getIcon(forcast?.weather?.get(0)?.id?.toInt()?:0)
+        imgStatus.setImageDrawable(
+                ContextCompat.getDrawable(this, icon)
+        )
+        tvStatus.text = forcast?.weather?.get(0)?.description
     }
 }
